@@ -1030,8 +1030,8 @@ validate -R pds4.label --target-manifest release3_data.txt
 
         </source>
     </subsection>
-        <subsection name="validate-parallel">
-        <p>To facilitate the splitting up, and running in parallel the data, one may use the <b>validate-parallel</b> script in the <a href="https://github.com/NASA-PDS-Incubator/validate/tree/master/src/main/resources/bin">src/main/resources/bin</a> directory.
+        <subsection name="validate-bundle">
+        <p>To facilitate the splitting up, and running in parallel the data, one may use the <b>validate-bundle</b> script in the <a href="https://github.com/NASA-PDS-Incubator/validate/tree/master/src/main/resources/bin">src/main/resources/bin</a> directory.
         <br/>This script has two prerequisites:
             <ul>
                 <li>the <b>validate</b> program be on your system path</li>
@@ -1041,58 +1041,140 @@ validate -R pds4.label --target-manifest release3_data.txt
         </p>
         <source>
 
-./validate-parallel.sh /directory/containing/products
+./validate-bundle /directory/containing/products
         </source>
         <p>By default, this program will split your input files up into N groups.  By default N is half the number of available cores on your machine.
         There are some circumstances where overriding this value may improve performance.  If you wish to do so, you may use the "-n" or "--num-groups" argument. </p>
         <source>
 
-./validate-parallel.sh /dir/containing/products --num-groups 3
+./validate-bundle /dir/containing/products --num-groups 3
         </source>
         When this runs, it will break your inputs up into groups, and run validate on them in parallel.
         Here's an example showing a run with three groups:
         <source>
 
-$ ./validate-parallel.sh -d /data/0001 --num-groups 3
-  validate binary is available (/usr/bin/validate) [OK]
-  GNU parallel binary is available (/usr/local/bin/parallel) [OK]
-  Directory to process is : /data/0001
-  Number of effective cores on this system: 8
-  Total number of products found to validate:      118
-  Cleaning up files from previous runs...
-  Splitting up inputs into 3 groups...
-  (40 files per group)
-  +--------------------+----------------+
-  |       Group        |   # in Group   |
-  +--------------------+----------------+
-  | ./validate_set_aa  |   40
-  | ./validate_set_ac  |   38
-  | ./validate_set_ab  |   40
-  +--------------------+-----------------
+$ ./validate-bundle -t ~/dph_example_archive_VG2PLS/bundle.xml
+validate binary is available (/Users/jpadams/Documents/proj/pds/pdsen/workspace/validate/validate-1.20.0-SNAPSHOT/bin/validate) [OK]
+GNU parallel binary is available (/usr/local/bin/parallel) [OK]
+Directory to process is : /Users/jpadams/dph_example_archive_VG2PLS
+Number of effective cores on this system: 8
+Half of effective cores on this system  : 4 (usually better than running all cores)
+Splitting up into groups, based on number of cores this machine has...
+Total number of products found to validate:       18
+Cleaning up files from previous runs...
+Splitting up inputs into 4 groups...
+(5 files per group)
++--------------------+----------------+
+|       Group        |   # in Group   |
++--------------------+----------------+
+| ./validate_set_aa  |   5
+| ./validate_set_ac  |   5
+| ./validate_set_ad  |   3
+| ./validate_set_ab  |   5
++--------------------+-----------------
 
-Running all 3 groups in parallel now...
+Running all 4 groups in parallel now...
 
 validate -R pds4.label --target-manifest ./validate_set_aa
 validate -R pds4.label --target-manifest ./validate_set_ac
+validate -R pds4.label --target-manifest ./validate_set_ad
 validate -R pds4.label --target-manifest ./validate_set_ab
 
+Performing XML and Content validation...
 Each validate command will output to an individual log.
 
-real	1m8.957s
-user	4m46.441s
-sys	0m9.094s
+real	0m13.615s
+user	1m25.390s
+sys	0m4.082s
 
-./validate_set_aa.log  :
-0 error(s)
+
+Performing Referential Integrity validation...
+Completed execution in 5365 ms
+
+
+
+
+>>>>>>>>>>>>>>> ./validate_set_ad.log :
+Summary:
+
+2281 error(s)
 0 warning(s)
 
-./validate_set_ac.log  :
-0 error(s)
+Message Types:
+2278         error.table.field_value_data_type_mismatch
+2            error.label.context_ref_not_found
+1            error.table.missing_CRLF
+
+End of Report
+
+>>>>>>>>>>>>>>>
+
+
+>>>>>>>>>>>>>>> ./validate_set_aa.log :
+Summary:
+
+6 error(s)
+1 warning(s)
+
+Message Types:
+2            error.label.context_ref_not_found
+2            error.table.fields_mismatch
+2            error.table.missing_CRLF
+1            warning.label.schematron
+
+End of Report
+
+>>>>>>>>>>>>>>>
+
+
+>>>>>>>>>>>>>>> ./validate_set_ac.log :
+Summary:
+
+12 error(s)
 0 warning(s)
 
-./validate_set_ab.log  :
-0 error(s)
+Message Types:
+6            error.label.context_ref_not_found
+4            error.table.missing_CRLF
+2            error.table.fields_mismatch
+
+End of Report
+
+>>>>>>>>>>>>>>>
+
+
+>>>>>>>>>>>>>>> ./validate_set_ab.log :
+Summary:
+
+6 error(s)
 0 warning(s)
+
+Message Types:
+6            error.label.context_ref_not_found
+
+End of Report
+
+>>>>>>>>>>>>>>>
+
+
+>>>>>>>>>>>>>>> ./validate_referential.log :
+Summary:
+
+1 error(s)
+2 warning(s)
+
+Message Types:
+1            error.file.name_has_invalid_characters
+1            warning.label.schematron
+1            warning.integrity.unreferenced_member
+
+End of Report
+
+>>>>>>>>>>>>>>>
+
+Validation complete. See validate_20200217_151431/validate_summary.log for a summary of results.
+All Validate Tool execution reports can be found in validate_20200217_151431.
+
         </source>
         </subsection>
     </section>
