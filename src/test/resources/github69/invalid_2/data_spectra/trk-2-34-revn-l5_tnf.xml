@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1900.sch" schematypens="http://purl.oclc.org/dsdl/schematron"
+?>
+<?xml-model href="http://pds.nasa.gov/pds4/mission/insight/v1/PDS4_INSIGHT_1600.sch" schematypens="http://purl.oclc.org/dsdl/schematron"
+?>
+<Product_Document xmlns="http://pds.nasa.gov/pds4/pds/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pds.nasa.gov/pds4/pds/v1 http://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1900.xsd http://pds.nasa.gov/pds4/insight/v1 http://pds.nasa.gov/pds4/mission/insight/v1/PDS4_INSIGHT_1600.xsd">
+<Identification_Area>
+<logical_identifier>urn:nasa:pds:insight_documents:document_rise:trk-2-34-revn-l5_tnf</logical_identifier>
+<version_id>1.0</version_id>
+<title>TRK-2-34 DSN Tracking System Data Archival Format</title>
+<information_model_version>1.9.0.0</information_model_version>
+<product_class>Product_Document</product_class>
+<Citation_Information>
+<publication_year>2013</publication_year>
+<description>
+TRK-2-34 DSN Tracking System Data Archival Format, Deep Space Network (DSN) No. 820-013, JPL D-76488, Revision N, November 7, 2013, Jet Propulsion Laboratory, California Institute of Technology
+</description>
+</Citation_Information>
+</Identification_Area>
+<Context_Area>
+<Investigation_Area>
+<name>InSight</name>
+<type>Mission</type>
+<Internal_Reference>
+<lidvid_reference>urn:nasa:pds:context:investigation:mission.insight::1.0</lidvid_reference>
+<reference_type>document_to_investigation</reference_type>
+</Internal_Reference>
+</Investigation_Area>
+</Context_Area>
+<Document>
+<publication_date>2013-11-07</publication_date>
+<Document_Edition>
+<edition_name>Rev. N</edition_name>
+<language>English</language>
+<files>1</files>
+<Document_File>
+<file_name>trk-2-34-revn-l5_tnf.pdf</file_name>
+<document_standard_id>PDF</document_standard_id>
+</Document_File>
+</Document_Edition>
+</Document>
+</Product_Document>

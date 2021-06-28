@@ -99,6 +99,9 @@ public enum Flag {
     /** Flag to disable data content validation. */
     SKIP_CONTENT_VALIDATION("D", "skip-content-validation", "Disable product content validation."),
 
+    /** Flag to disable context reference check. */
+    SKIP_CONTEXT_REFERENCE_CHECK("T", "skip-context-reference-check", "Disable context reference check."),
+
     /**
      * Flag to specify a report file name.
      */

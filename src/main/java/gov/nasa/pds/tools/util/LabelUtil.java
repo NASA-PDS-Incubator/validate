@@ -56,8 +56,15 @@ public class LabelUtil {
   private static String INFORMATION_MODEL_VERSION = "information_model_version";
   private static String IDENTIFICATION_AREA = "//*:Identification_Area[namespace-uri()='" + PDS4_NS + "']";
   private static String INTERNAL_REFERENCE_AREA = "//*:Reference_List/*:Internal_Reference[namespace-uri()='" + PDS4_NS + "']";
-  private static String LIDVID_REFERENCE = "lidvid_reference";
-  private static String LID_REFERENCE = "lid_reference";
+
+  public static String LIDVID_REFERENCE = "lidvid_reference";
+  public static String LID_REFERENCE = "lid_reference";
+
+  // Symbols to parse references from Context_Area tag.
+  public static String CONTEXT_AREA_TARGET_IDENTIFICATION_REFERENCE = "//*:Target_Identification/*:Internal_Reference[namespace-uri()='" + PDS4_NS + "']";
+  public static String CONTEXT_AREA_OBSERVATION_SYSTEM_COMPONENT_REFERENCE = "//*:Observing_System/*:Observing_System_Component/*:Internal_Reference[namespace-uri()='" + PDS4_NS + "']";
+  public static String CONTEXT_AREA_INVESTIGATION_AREA_REFERENCE = "//*:Investigation_Area/*:Internal_Reference[namespace-uri()='" + PDS4_NS + "']";
+
   private static String LOGICAL_IDENTIFIER_TAG = "logical_identifier";
   private static String VERSION_ID_TAG = "version_id";
 
@@ -223,7 +230,7 @@ public class LabelUtil {
      return(informationModelVersion);
   }
 
-  private static ArrayList<String> getIdentifiersCommon(DOMSource source, URL context, String[] tagsList, String searchPathName) {
+  public static ArrayList<String> getIdentifiersCommon(DOMSource source, URL context, String[] tagsList, String searchPathName) {
       // Common function to retrieve values either from logical_identifier or lid_reference/lidvid_reference tags.
       // Note that because a node for logical_identifier can have a version id in another tag, they both must be check
       // before combining them together to .
@@ -234,6 +241,7 @@ public class LabelUtil {
           // Get to the node containing the searchPathName
           NodeList nodeList = (NodeList) xPathFactory.newXPath().evaluate(searchPathName,source,XPathConstants.NODESET);
           LOG.debug("getIdentifiersCommon:context,nodeList.getLength() {},{}",context,nodeList.getLength());
+          LOG.debug("getIdentifiersCommon:context,searchPathName,nodeList.getLength() {},{},{}",context,searchPathName,nodeList.getLength());
           for (int i = 0; i < nodeList.getLength(); ++i) {
               NodeList childList = ((Element) nodeList.item(i)).getChildNodes();
               String singleIdentifier = null;
@@ -269,7 +277,8 @@ public class LabelUtil {
      } catch (XPathExpressionException ex) {
          LOG.error("Cannot extract field(s) {} or {} from context {}",tagsList,VERSION_ID_TAG,context.toString());
      }
-     LOG.debug("getIdentifiersCommon:context,commonIdentifiers {},{}",context,commonIdentifiers);
+     LOG.debug("getIdentifiersCommon:context,commonIdentifiers,searchPathName {},{},{}",context,commonIdentifiers,searchPathName);
+     LOG.debug("getIdentifiersCommon:context,commonIdentifiers.size,searchPathName {},{},{}",context,commonIdentifiers.size(),searchPathName);
      return(commonIdentifiers);
   }
 

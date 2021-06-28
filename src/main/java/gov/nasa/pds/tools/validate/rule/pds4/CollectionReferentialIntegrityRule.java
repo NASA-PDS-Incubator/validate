@@ -30,6 +30,7 @@ import gov.nasa.pds.tools.inventory.reader.InventoryEntry;
 import gov.nasa.pds.tools.inventory.reader.InventoryReaderException;
 import gov.nasa.pds.tools.inventory.reader.InventoryTableReader;
 import gov.nasa.pds.tools.label.ExceptionType;
+import gov.nasa.pds.tools.util.ReferentialIntegrityUtil;
 import gov.nasa.pds.tools.util.Utility;
 import gov.nasa.pds.tools.util.XMLExtractor;
 import gov.nasa.pds.tools.validate.Identifier;
@@ -109,6 +110,20 @@ public class CollectionReferentialIntegrityRule extends AbstractValidationRule {
       reportError(GenericProblems.UNCAUGHT_EXCEPTION, getTarget(), -1, -1, 
           io.getMessage());
     }
+
+    // https://github.com/NASA-PDS/validate/issues/69
+    // As a user, I want to validate that all context objects specified in observational products are referenced in the parent bundle/collection Reference_List
+    //
+    // For every references in the Context_Area, check if it also occur in the bundle/collection Reference_List,
+    //  i.e: All context objects specified in observational are referenced in the parent bundle/collection Reference_List 
+    //
+
+    ReferentialIntegrityUtil.initialize("collection",getTarget(),getListener(),getContext());
+    ReferentialIntegrityUtil.additionalReferentialIntegrityChecks(getTarget());
+
+    // Report any references declared in labels but not referenced in the parent bundle.
+    ReferentialIntegrityUtil.reportContextReferencesUnreferenced();
+
   }
   
   private void getCollectionMembers(URL collection) {

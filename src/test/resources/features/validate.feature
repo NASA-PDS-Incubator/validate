@@ -136,8 +136,8 @@ Scenario Outline: Execute validate command for tests below.
  |"NASA-PDS/validate#210 WITH_WARNING" | "github210" | 1 | "1 warning message expected" | "totalWarnings" | "src/test/resources" | "target/test" | "--skip-content-validation -r {reportDir}/report_github210_label_valid_both_with_warning.json  -s json -t {resourceDir}/github210/bundle_cassini-huygens-coradar.xml {resourceDir}/github210/BILQH07S314_D065_T008S02_V02_without_Missing_Area_tag.xml" | "report_github210_label_valid_both_with_warning.json" |
 
 # https://github.com/NASA-PDS/validate/issues/310 Validate missing collections in bundle after CCB-282 updates
- |"NASA-PDS/validate#310 WITHOUT_WARNING" | "github310" | 0 | "0 warning message expected" | "totalWarnings" | "src/test/resources" | "target/test" | "-R pds4.bundle --skip-content-validation -r {reportDir}/report_github310_bundle_valid.json  -s json -t {resourceDir}/github310/valid/bundle.xml" | "report_github310_bundle_valid.json" |
- |"NASA-PDS/validate#310 WITH_WARNING" | "github310" | 2 | "2 warning message expected" | "totalWarnings" | "src/test/resources" | "target/test" | "-R pds4.bundle --skip-content-validation -r {reportDir}/report_github310_bundle_invalid.json  -s json -t {resourceDir}/github310/invalid/bundle.xml" | "report_github310_bundle_invalid.json" |
+ |"NASA-PDS/validate#310 WITHOUT_WARNING" | "github310" | 0 | "0 UNREFERENCED_MEMBER warning message expected" | "UNREFERENCED_MEMBER" | "src/test/resources" | "target/test" | "-R pds4.bundle --skip-content-validation -r {reportDir}/report_github310_bundle_valid.json  -s json -t {resourceDir}/github310/valid/bundle.xml" | "report_github310_bundle_valid.json" |
+ |"NASA-PDS/validate#310 WITH_WARNING" | "github310" | 2 | "2 UNREFERENCED_MEMBER warning message expected" | "UNREFERENCED_MEMBER" | "src/test/resources" | "target/test" | "-R pds4.bundle --skip-content-validation -r {reportDir}/report_github310_bundle_invalid.json  -s json -t {resourceDir}/github310/invalid/bundle.xml" | "report_github310_bundle_invalid.json" |
 
 # https://github.com/NASA-PDS/validate/issues/57 As a user, I want to be warned when there are alphanumeric characters between fields in Table_Character
  |"NASA-PDS/validate#57 WITH_WARNING" | "github57" | 5 | "5 warning messages expected" | "totalWarnings" | "src/test/resources" | "target/test" | "-R pds4.label --strict-field-checks --skip-context-validation -r {reportDir}/report_github57_label_valid_with_warning.json  -s json -t {resourceDir}/github57/validate_57a_valid.xml" | "report_github57_label_valid_with_warning.json" |
@@ -164,8 +164,8 @@ Scenario Outline: Execute validate command for tests below.
 
 # https://github.com/NASA-PDS/validate/issues/328 validate bundle incorrectly reports "not a member of any collection" that it passed before
 
- |"NASA-PDS/validate#328 VALID" | "github328" | 0 | "0 warning messages expected." | "totalWarnings" | "src/test/resources" | "target/test" | "-R pds4.bundle -r {reportDir}/report_github328_bundle_valid.json -s json -t {resourceDir}/github328/valid/bundle_misc.xml" | "report_github328_bundle_valid.json" |
- |"NASA-PDS/validate#328 INVALID" | "github328" | 1 | "1 warning messages expected." | "totalWarnings" | "src/test/resources" | "target/test" | "-R pds4.bundle -r {reportDir}/report_github328_bundle_invalid.json -s json -t {resourceDir}/github328/invalid/bundle_misc.xml" | "report_github328_bundle_invalid.json" |
+ |"NASA-PDS/validate#328 VALID" | "github328" | 0 | "0 warning messages expected." | "UNREFERENCED_MEMBER" | "src/test/resources" | "target/test" | "-R pds4.bundle -r {reportDir}/report_github328_bundle_valid.json -s json -t {resourceDir}/github328/valid/bundle_misc.xml" | "report_github328_bundle_valid.json" |
+ |"NASA-PDS/validate#328 INVALID" | "github328" | 1 | "1 warning messages expected." | "UNREFERENCED_MEMBER" | "src/test/resources" | "target/test" | "-R pds4.bundle -r {reportDir}/report_github328_bundle_invalid.json -s json -t {resourceDir}/github328/invalid/bundle_misc.xml" | "report_github328_bundle_invalid.json" |
 
 # https://github.com/NASA-PDS/validate/issues/334 validate 2.1.0 snapshot fails on a label with 2 table_character
 
@@ -179,7 +179,7 @@ Scenario Outline: Execute validate command for tests below.
 # 2 warning.integrity.unreferenced_member
 # 4 info.validation.general
 #
- |"NASA-PDS/validate#308 INVALID" | "github308" | 6 | "6 warning messages expected." | "totalWarnings" | "src/test/resources" | "target/test" | "-R pds4.bundle -r {reportDir}/report_github308_bundle_invalid.json -s json -t {resourceDir}/github308/invalid/bundle_kaguya_derived.xml" | "report_github308_bundle_invalid.json" |
+ |"NASA-PDS/validate#308 INVALID" | "github308" | 2 | "2 UNREFERENCED_MEMBER warning messages expected." | "UNREFERENCED_MEMBER" | "src/test/resources" | "target/test" | "-R pds4.bundle -r {reportDir}/report_github308_bundle_invalid.json -s json -t {resourceDir}/github308/invalid/bundle_kaguya_derived.xml" | "report_github308_bundle_invalid.json" |
 
 # https://github.com/NASA-PDS/validate/issues/344 validate inexplicably writes to validate_stack_traces.log
 
@@ -189,6 +189,11 @@ Scenario Outline: Execute validate command for tests below.
 
  |"NASA-PDS/validate#345 VALID" | "github345" | 0 | "0 error messages expected." | "totalErrors" | "src/test/resources" | "target/test" | "-R pds4.label -r {reportDir}/report_github345_label_valid.json -s json -t {resourceDir}/github345/astro_sample_t.xml" | "report_github345_label_valid.json" |
  |"NASA-PDS/validate#345 VALID_2" | "github345" | 0 | "0 error messages expected." | "totalErrors" | "src/test/resources" | "target/test" | "-R pds4.label -r {reportDir}/report_github345_label_valid_2.json -s json -t {resourceDir}/github345/astro_sample_data_t.xml" | "report_github345_label_valid_2.json" |
+
+# https://github.com/NASA-PDS/validate/issues/69 As a user, I want to validate that all context objects specified in observational products are referenced in the parent bundle/collection Reference_List 
+ |"NASA-PDS/validate#69 INVALID_1" | "github69" | 16 | "16 MISSING_CONTEXT_REFERENCE messages expected." | "MISSING_CONTEXT_REFERENCE" | "src/test/resources" | "target/test" | "-R pds4.bundle --skip-product-validation -r {reportDir}/report_github69_bundle_invalid_1.json -s json -t {resourceDir}/github69/invalid/bundle_kaguya_derived.xml" | "report_github69_bundle_invalid_1.json" |
+ |"NASA-PDS/validate#69 INVALID_2" | "github69" | 13 | "13 MISSING_CONTEXT_REFERENCE messages expected." | "MISSING_CONTEXT_REFERENCE" | "src/test/resources" | "target/test" | "-R pds4.bundle --skip-product-validation -r {reportDir}/report_github69_collection_invalid_2.json -s json -t {resourceDir}/github69/invalid_2/bundle_kaguya_derived.xml" | "report_github69_collection_invalid_2.json" |
+ |"NASA-PDS/validate#69 INVALID_3" | "github69" | 0  | "0  MISSING_CONTEXT_REFERENCE messages expected." | "MISSING_CONTEXT_REFERENCE" | "src/test/resources" | "target/test" | "-R pds4.bundle --skip-context-reference-check --skip-product-validation -r {reportDir}/report_github69_collection_invalid_3.json -s json -t {resourceDir}/github69/invalid_2/bundle_kaguya_derived.xml" | "report_github69_collection_invalid_3.json" |
 
 # BIG_NOTE: Add new tests that doesn't involve a catalog above this line.
 # https://github.com/NASA-PDS/validate/issues/297 Content validation of ASCII_Integer field does not accept value with leading zeroes

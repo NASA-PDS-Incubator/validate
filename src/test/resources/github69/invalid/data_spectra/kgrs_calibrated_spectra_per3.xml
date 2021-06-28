@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1B00.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+
+<Product_Observational xmlns="http://pds.nasa.gov/pds4/pds/v1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pds.nasa.gov/pds4/pds/v1 https://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1B00.xsd">
+    <Identification_Area>
+      <logical_identifier>urn:nasa:pds:kaguya_grs_spectra:data_spectra:kgrs_calibrated_spectra_per3</logical_identifier>
+      <version_id>1.0</version_id>
+      <title>Kaguya Gamma-Ray Spectrometer Corrected Spectra</title>
+      <information_model_version>1.11.0.0</information_model_version>
+      <product_class>Product_Observational</product_class>
+      <Modification_History>
+        <Modification_Detail>
+          <modification_date>2019-09-30</modification_date>
+          <version_id>1.0</version_id>
+          <description>First release</description>
+        </Modification_Detail>
+      </Modification_History>
+    </Identification_Area>
+    <Observation_Area>
+      <Time_Coordinates>
+        <start_date_time>2009-02-10T18:26:40Z</start_date_time>
+        <stop_date_time>2009-05-28T07:43:22Z</stop_date_time>
+      </Time_Coordinates>
+      <Primary_Result_Summary>
+        <purpose>Science</purpose>
+        <processing_level>Derived</processing_level>
+        <description>
+          This collection contains Kaguya Gamma-Ray Spectrometer (KGRS) corrected and calibrated time-series
+          spectra acquired during the nominal and extended observation periods of JAXA's SELENE (Kaguya) mission.
+
+          The SELENE mission was the Japanese mission to the Moon with a main orbiter “Kaguya” and
+          two daughter relay satellites launched on Sep. 14, 2007. KGRS was mounted on the deck of the
+          main orbiter. It employed a high-purity Ge (HPGe) crystal as a main detector, and surrounding
+          BGO and plastic scintillators as anti-coincidence detectors to reduce backgrounds. The
+          Ge crystal was cooled by a Sterling refrigerator. It made close-proximity observations of the
+          Moon from Dec. 14, 2007 to Dec. 11, 2008 at the high circular orbital altitude of 100 km, and
+          from Feb. 10 to May 28 in 2009 at the low elliptical orbital altitude of ~30 x 50 km.
+          
+          KGRS recorded energy spectra of gamma rays in two gain modes simultaneously; high gain (0.1
+          to 3 MeV) and low gain (0.1 to 13 MeV), each of which was analyzed by the 13-bit (8192 ch)
+          analog-to-digital converter (ADC). While the former has a higher spectral resolution over the
+          energy range of radioactive elements, the latter has better statistics and covers the whole energy
+          range of major rock-forming elements, including the Fe neutron capture line at 7.6 MeV. The
+          accumulation time of each spectrum was 17 s. Both modes of spectra are included in this archive.
+          
+          The observation epochs of KGRS consists of three regular measurement periods (Period 1 to 3),
+          background measurements, and the annealing of the Ge crystal. The HPGe detector was annealed
+          from 16 to 25, December 2008, which improved energy resolution by a factor of two. 
+          Period 1 and 2 lasted two and five months, respectively, with limited spatial or spectral
+          resolutions. Period 3 lasted ~3.5 months (including dead time) with the best spatial and spectral
+          resolutions. In addition, spectra from the background measurement when the satellite was flipped 
+          and the detector faced deep space can be analyzed to estimate the background gamma-ray intensity
+          from the satellite due to the exposure to galactic cosmic rays.
+          
+          The following data reduction processes, based on those successfully used for Lunar Prospector and 
+          Dawn missions, were applied to the raw time-series spectra of KGRS: 1) Filtering of invalid events,
+          2) ADC Differential Non-Linearity, and 3) Gain correction and energy calibration. Correction factors
+          for satellite altitude and galactic cosmic ray intensities are provided as part of the KGRS ephemeris
+          data.
+        </description>
+        </Primary_Result_Summary>
+        <Investigation_Area>
+          <name>Kaguya</name>
+          <type>Mission</type>
+          <Internal_Reference>
+            <lid_reference>urn:nasa:pds:context:investigation:mission.kaguya</lid_reference>
+            <reference_type>data_to_investigation</reference_type>
+          </Internal_Reference>
+        </Investigation_Area>
+        <Observing_System>
+          <name>Kaguya</name>
+          <Observing_System_Component>
+            <name>Kaguya</name>
+            <type>Spacecraft</type>
+            <Internal_Reference>
+              <lid_reference>urn:nasa:pds:context:instrument_host:spacecraft.kaguya</lid_reference>
+              <reference_type>is_instrument_host</reference_type>
+            </Internal_Reference>
+          </Observing_System_Component>
+          <Observing_System_Component>
+            <name>GRS</name>
+            <type>Instrument</type>
+            <Internal_Reference>
+              <lid_reference>urn:nasa:pds:context:instrument:kaguya.grs</lid_reference>
+              <reference_type>is_instrument</reference_type>
+            </Internal_Reference>
+          </Observing_System_Component>            
+        </Observing_System>
+        <Target_Identification>
+          <name>Moon</name>
+          <type>Satellite</type>
+          <Internal_Reference>
+            <lid_reference>urn:nasa:pds:context:target:satellite.earth.moon</lid_reference>
+            <reference_type>collection_to_target</reference_type>
+          </Internal_Reference>
+        </Target_Identification>
+    </Observation_Area>
+    <Reference_List>
+		<Internal_Reference>
+			<lid_reference>urn:nasa:pds:kaguya_grs_spectra:document:kgrs_calibrated_spectra</lid_reference>
+			<reference_type>data_to_document</reference_type>
+		</Internal_Reference>
+    </Reference_List>
+    <File_Area_Observational>
+      <File>
+        <file_name>kgrs_calibrated_spectra_per3.csv</file_name>
+        <creation_date_time>2019-08-22T22:26:09Z</creation_date_time>
+      </File>
+      <Table_Delimited>
+        <offset unit="byte">0</offset>
+        <parsing_standard_id>PDS DSV 1</parsing_standard_id>
+        <description>
+          This archive consists of three spectrum files (each corresponding to one KGRS epoch) and one unified
+          EPG file. The spectrum files contain a time series of corrected and calibrated pulse height spectra
+          acquired by KGRS's HPGe detector in the lunar orbit. In the spectrum files, each row contains the
+          spacecraft clock (sclk) ticks and UTC time corresponding to the end of the accumulation interval
+          (17 s), with the two sets of the 8192-channel HPGe spectra accumulated. In the EPG file, each row
+          starts with sclk recorded at the end of the accumulation interval to match spacecraft positions,
+          pointing, and correction factors with the corrected spectra. Note that the UTC time and ephemeris time
+          included in the EPG file correspond to the midpoint of the accumulation interval.
+        </description>
+        <records>527736</records>
+	    <record_delimiter>Carriage-Return Line-Feed</record_delimiter>
+	    <field_delimiter>Comma</field_delimiter>
+        <Record_Delimited>
+          <fields>10</fields>
+          <groups>2</groups>
+          <Field_Delimited>
+            <name>sclk</name>
+            <field_number>1</field_number>
+            <data_type>ASCII_Integer</data_type>
+            <unit>seconds</unit>
+            <description>
+              Spacecraft clock (sclk) ticks at the end of the accumulation interval in seconds. The origin 
+			  of the sclk is Jan 6, 1980, 0:0:0. Each spectrum, scaler value, and ephemeris have a unique 
+			  sclk value, which can be used as an identifier. Kaguya's sclk is also known as a time index
+			  (TI).
+			</description>
+          </Field_Delimited>
+          <Field_Delimited>
+            <name>utc</name>
+            <field_number>2</field_number>
+            <data_type>ASCII_String</data_type>
+            <description>UTC time corresponding to the sclk at the end of the accumulation interval</description>
+          </Field_Delimited>
+		  <Field_Delimited>
+            <name>Period</name>
+            <field_number>3</field_number>
+            <data_type>ASCII_Integer</data_type>
+            <description>Epoch of the Kaguya GRS mission, 1-3.</description>
+          </Field_Delimited>
+		  <Field_Delimited>
+            <name>background_observation</name>
+            <field_number>4</field_number>
+            <data_type>ASCII_Integer</data_type>
+            <description>
+			  A flag to indicate the special operations of the Kaguya spacecraft where it was flipped and the GRS 
+			  was pointed to the deep space to measure background gamma rays from spacecraft. 0 indicates nominal 
+			  measurements suitable for geochemical study of the Moon. 1 indicates spectra were obtained during
+			  the background-measuring operations.
+			</description>
+          </Field_Delimited>
+		  <Field_Delimited>
+            <name>live_time</name>
+            <field_number>5</field_number>
+            <data_type>ASCII_Real</data_type>
+		        <unit>seconds</unit>
+            <description>Live time of the spectrometer</description>
+          </Field_Delimited>
+		  <Field_Delimited>
+            <name>ge_over</name>
+            <field_number>6</field_number>
+            <data_type>ASCII_Integer</data_type>
+             <description>
+			   Overload scaler value for the HPGe detector. A good proxy for variations in intensities of galactic
+               cosmic rays.
+			 </description>
+           </Field_Delimited>
+		  <Field_Delimited>
+            <name>offset_HG</name>
+            <field_number>7</field_number>
+            <data_type>ASCII_Real</data_type>
+            <description>0th order coefficient for calibration of ADC channels to energies for high-gain spectra</description>
+          </Field_Delimited>
+		  <Field_Delimited>
+            <name>gain_HG</name>
+            <field_number>8</field_number>
+            <data_type>ASCII_Real</data_type>
+            <description>1st order coefficient for calibration of ADC channels to energies for high-gain spectra</description>
+          </Field_Delimited>
+		  <Field_Delimited>
+            <name>offset_LG</name>
+            <field_number>9</field_number>
+            <data_type>ASCII_Real</data_type>
+            <description>0th order coefficient for calibration of ADC channels to energies for low-gain spectra</description>
+          </Field_Delimited>
+		  <Field_Delimited>
+            <name>gain_LG</name>
+            <field_number>10</field_number>
+            <data_type>ASCII_Real</data_type>
+            <description>1st order coefficient for calibration of ADC channels to energies for low-gain spectra</description>
+          </Field_Delimited>
+		  <Group_Field_Delimited>
+            <group_number>1</group_number>
+            <repetitions>8192</repetitions>
+            <fields>1</fields>
+            <groups>0</groups>	  
+		    <Field_Delimited>
+              <name>high_gain_histogram</name>
+              <field_number>1</field_number>
+              <data_type>ASCII_Integer</data_type>
+              <description>
+			    8192-channel, high-gain calibrated HPGe spectrum covering up to ~3.3 MeV. 
+			    The pulse height of each channel (0-8191), E, is given by E (keV) = gain_HG x ch + offset_HG.
+			  </description>
+            </Field_Delimited>
+          </Group_Field_Delimited>
+          <Group_Field_Delimited>
+            <group_number>2</group_number>
+            <repetitions>8192</repetitions>
+            <fields>1</fields>
+            <groups>0</groups>	  
+		    <Field_Delimited>
+              <name>low_gain_histogram</name>
+              <field_number>1</field_number>
+              <data_type>ASCII_Integer</data_type>
+              <description>
+			    8192-channel, low-gain calibrated HPGe spectrum covering up to ~13 MeV.
+			    The pulse height of each channel (0-8191), E, is given by E (keV) = gain_LG x ch + offset_LG.
+			  </description>
+            </Field_Delimited>
+          </Group_Field_Delimited>
+        </Record_Delimited>
+      </Table_Delimited>
+    </File_Area_Observational>
+</Product_Observational>

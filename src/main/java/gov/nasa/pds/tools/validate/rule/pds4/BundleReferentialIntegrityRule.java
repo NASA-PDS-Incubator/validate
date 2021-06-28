@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
 
 import gov.nasa.pds.tools.label.ExceptionType;
 import gov.nasa.pds.tools.util.LabelUtil;
+import gov.nasa.pds.tools.util.ReferentialIntegrityUtil;
 import gov.nasa.pds.tools.util.Utility;
 import gov.nasa.pds.tools.util.XMLExtractor;
 import gov.nasa.pds.tools.validate.Identifier;
@@ -57,6 +58,9 @@ public class BundleReferentialIntegrityRule extends AbstractValidationRule {
 
   private static final Pattern BUNDLE_LABEL_PATTERN = 
       Pattern.compile(".*bundle.*\\.xml", Pattern.CASE_INSENSITIVE);
+
+  private static final Pattern COLLECTION_LABEL_PATTERN = 
+      Pattern.compile(".*collection.*\\.xml", Pattern.CASE_INSENSITIVE);
   
   private static final String PRODUCT_CLASS =
       "//*[starts-with(name(),'Identification_Area')]/product_class";
@@ -97,263 +101,6 @@ public class BundleReferentialIntegrityRule extends AbstractValidationRule {
     } else {
       return false;
     }
-  }
-
-  private boolean doesReferenceContainsVersion(String singleLidOrLidvidReference) {
-      if (singleLidOrLidvidReference.contains("::")) {
-          return(true);
-      } else {
-          return(false);
-      }
-  }
-
-  private void performReporting(String singleLidOrLidvidReference, boolean referenceIsLidvid, int indexToFilenames) {
-      try {
-          String message = "";
-          URL url = this.lidOrLidVidReferencesCumulativeFileNames.get(indexToFilenames); // The warning message will be for this label.
-          if (referenceIsLidvid) {
-              message = "A LIDVID reference " + singleLidOrLidvidReference + " is referencing a logical identifier for a product not found in this bundle.";
-          } else {
-              message = "A LID reference " + singleLidOrLidvidReference + " is referencing a logical identifier for a product not found in this bundle.";
-          }
-          LOG.debug(message);
-
-          // Build the ValidationProblem and add it to the report.
-          ValidationProblem p1 = new ValidationProblem(new ProblemDefinition(ExceptionType.WARNING,
-                                                                                 ProblemType.GENERAL_INFO, message),url);
-          // Append the WARNING message to the report.
-          getListener().addProblem(p1);
-
-      } catch (Exception e) {
-          e.printStackTrace();
-      }
-  }
-
-  private boolean bruteForceCheckForNonExistLogicalReferences(String singleLidOrLidvidReference) {
-      // Given a LID or LIDVID reference, check to see if it is in logicalIdentifiersCumulative.
-      // Because the reference may not contain the version, we must do a brute-force check since the logicalIdentifiersCumulative contains a version number.
-      boolean referenceIsValid = false;
-
-      for (String singleLogicalIdentifier : this.logicalIdentifiersCumulative) {
-          LOG.debug("bruteForceCheckForNonExistLogicalReferences:singleLidOrLidvidReference,singleLogicalIdentifier {},{}",singleLidOrLidvidReference,singleLogicalIdentifier);
-          if (singleLogicalIdentifier.contains(singleLidOrLidvidReference)) {
-              referenceIsValid = true;
-              LOG.debug("bruteForceCheckForNonExistLogicalReferences:singleLidOrLidvidReference,singleLogicalIdentifier,REFERENCE_IS_VALID {},{}",singleLidOrLidvidReference,singleLogicalIdentifier);
-              break;
-          }
-      }
-      return(referenceIsValid);
-  }
-
-
-  /**
-   * Report a WARNING if any LID or LIDVID references does not resolve to at least one element in the list of logical identifiers.
-   * @param validationRule The rule of the validation, e.g. pds4.label, pds4.bundle.  This value can be null since a rule is is not required within validate module.
-   * @return None
-   */
-  private void reportLidOrLidvidReferenceToNonExistLogicalReferences() {
-      // After all the local_identifier and lid_reference or lidliv_reference tags are collected, they can be check if they are pointing to local identifier collected.
-
-      try {
-        int indexToFilenames = 0;
-        for (String singleLidOrLidvidReference : this.lidOrLidVidReferencesCumulative) {
-             LOG.debug("reportLidOrLidvidReferenceToNonExistLogicalReferences:VALIDATING_REFERENCE:singleLidOrLidvidReference,filename {},{}",singleLidOrLidvidReference,this.lidOrLidVidReferencesCumulativeFileNames.get(indexToFilenames));
-            // It is possible that the reference does not contain a version, we must check for existence differently.
-            if (!this.doesReferenceContainsVersion(singleLidOrLidvidReference)) {
-                if (!this.bruteForceCheckForNonExistLogicalReferences(singleLidOrLidvidReference)) {
-
-                    // We also need to check if the product is actually a product in the bundle.
-                    // We should not throw a WARNING if the product does not belong to the bundle.
-                    String filename = this.lidOrLidVidReferencesCumulativeFileNames.get(indexToFilenames).toString(); 
-                    String logicalIdentifierPerLidReference = this.lidOrLidvidReferenceToLogicalIdentifierMap.get(singleLidOrLidvidReference);
-
-                    LOG.debug("reportLidOrLidvidReferenceToNonExistLogicalReferences:filename,logicalIdentifierPerLidReference {},{}",filename,logicalIdentifierPerLidReference);
-
-                    boolean productBelongToBundleFlag = this.isIdentiferMatchingBundleBaseID(logicalIdentifierPerLidReference);
-
-                    // Only throw a WARNING if the product does belong to this bundle.
-                    if (productBelongToBundleFlag == true) {
-                        LOG.debug("reportLidOrLidvidReferenceToNonExistLogicalReferences:PRODUCT_IS_IN_BUNDLE:filename,logicalIdentifierPerLidReference {},{}",filename,logicalIdentifierPerLidReference);
-                        this.performReporting(singleLidOrLidvidReference, false, indexToFilenames);
-                    } else {
-                        LOG.debug("reportLidOrLidvidReferenceToNonExistLogicalReferences:PRODUCT_NOT_IN_BUNDLE:filename,logicalIdentifierPerLidReference {},{}",filename,logicalIdentifierPerLidReference);
-                    }
-                } else {
-                    LOG.debug("reportLidOrLidvidReferenceToNonExistLogicalReferences:LID_REFERENCE:singleLidOrLidvidReference {} is in logicalIdentifiersCumulative",singleLidOrLidvidReference);
-                }
-            } else {
-                if (!this.logicalIdentifiersCumulative.contains(singleLidOrLidvidReference)) {
-
-                    // We also need to check if the product is actually a product in the bundle.
-                    // We should not throw a WARNING if the product does not belong to the bundle.
-                    String filename = this.lidOrLidVidReferencesCumulativeFileNames.get(indexToFilenames).toString();
-                    String logicalIdentifierPerLidReference = this.lidOrLidvidReferenceToLogicalIdentifierMap.get(singleLidOrLidvidReference);
-
-                    LOG.debug("reportLidOrLidvidReferenceToNonExistLogicalReferences:filename,logicalIdentifierPerLidReference {},{}",filename,logicalIdentifierPerLidReference);
-
-
-                    //boolean productBelongToBundleFlag = this.isIdentiferMatchingBundleBaseID(logicalIdentifierPerFilename);
-                    boolean productBelongToBundleFlag = this.isIdentiferMatchingBundleBaseID(logicalIdentifierPerLidReference);
-
-                    // Only throw a WARNING if the product does belong to this bundle.
-                    if (productBelongToBundleFlag == true) {
-                        LOG.debug("reportLidOrLidvidReferenceToNonExistLogicalReferences:PRODUCT_IS_IN_BUNDLE:filename,logicalIdentifierPerLidReference {},{}",filename,logicalIdentifierPerLidReference);
-                        this.performReporting(singleLidOrLidvidReference, true, indexToFilenames);
-                    } else {
-                        LOG.debug("reportLidOrLidvidReferenceToNonExistLogicalReferences:PRODUCT_NOT_IN_BUNDLE:filename,logicalIdentifierPerLidReference {},{}",filename,logicalIdentifierPerLidReference);
-                    }
-                } else {
-                    LOG.debug("reportLidOrLidvidReferenceToNonExistLogicalReferences:LIDVID_REFERENCE:singleLidOrLidvidReference {} is in logicalIdentifiersCumulative",singleLidOrLidvidReference);
-                }
-            }
-            indexToFilenames += 1;
-        } // end for loop
-      } catch (Exception e) {
-          e.printStackTrace();
-      }
-  }
-
-  private boolean hasReferenceIDAndFilenameComboAdded(String singleLidorLidVidReference, URL filename) {
-      boolean referenceIDAndFilenameComboAddedFlag = false;
-      // Build the combo of reference and filename together from input parameters.
-      // Remove the use of the slash '/' to avoid confusion.   We are merely looking at the combination of the lid_reference (or lidvid_reference) plus filename as strings for comparison.
-      String referenceIDAndFilenameComboValue = singleLidorLidVidReference + filename.toString();
-      for (int ii=0; ii < this.lidOrLidVidReferencesCumulative.size(); ii++) {
-          // Build the combo of reference and filename together from each value in this.lidOrLidVidReferencesCumulative.get and this.lidOrLidVidReferencesCumulativeFileNames.get.
-          // Remove the use of the slash '/' to avoid confusion.   We are merely looking at the combination of the lid_reference (or lidvid_reference) plus filename as strings for comparison.
-          String singleComboValue = this.lidOrLidVidReferencesCumulative.get(ii) + this.lidOrLidVidReferencesCumulativeFileNames.get(ii);
-          LOG.debug("hasReferenceIDAndFilenameComboAdded:referenceIDAndFilenameComboValue,singleComboValue {},{}",referenceIDAndFilenameComboValue,singleComboValue);
-          if (referenceIDAndFilenameComboValue.equals(singleComboValue)) {
-              // If there is a compare, we have found our answer and will break out of loop.
-              referenceIDAndFilenameComboAddedFlag = true;
-              break;
-          }
-      }
-      return(referenceIDAndFilenameComboAddedFlag);
-  }
-
-  private boolean isIdentiferMatchingBundleBaseID(String singleLogicalIdentifier) {
-      // Given a logical identifier, check if it contains the bundle base identifier.
-      // If the bundle base identifier is urn:nasa:pds:kaguya_grs_spectra
-      // then urn:nasa:pds:kaguya_grs_spectra:document:kgrs_calibrated_spectra does contain the bundle base identifier. 
-      boolean identifierMatchBundleBaseIDFlag = false;
-      if (singleLogicalIdentifier != null) {
-          if ((this.bundleBaseID != null) && singleLogicalIdentifier.contains(this.bundleBaseID)) {
-              identifierMatchBundleBaseIDFlag = true;
-          }
-      }
-
-      LOG.debug("isIdentiferMatchingBundleBaseID:singleLogicalIdentifier,this.bundleBaseID,identifierMatchBundleBaseIDFlag {},{},{}",singleLogicalIdentifier,this.bundleBaseID,identifierMatchBundleBaseIDFlag);
-      return(identifierMatchBundleBaseIDFlag);
-  }
-
-  private String getBundleBaseID(ArrayList<String> logicalIdentifiers, String bundleFilename) {
-      // Given a list of logical identifier from a bundle, fetch the bundle base ID
-      // urn:nasa:pds:kaguya_grs_spectra:document:kgrs_calibrated_spectra --> urn:nasa:pds:kaguya_grs_spectra
-      // urn:nasa:pds:kaguya_grs_spectra                                  --> urn:nasa:pds:kaguya_grs_spectra
-      // Note that a bundle should only have one logical_identifier so we pick the first element and print a warning if there are more than one.
-      String bundleBaseID = null;
-      if (logicalIdentifiers.size() >= 1) {
-          if (logicalIdentifiers.size() == 1) {
-              // Split the logical id and fetch the first 4 to form the bundleBaseID
-              String [] splittedTokens = logicalIdentifiers.get(0).split(":");
-              if (splittedTokens.length >= 4) {
-                  bundleBaseID = splittedTokens[0] + ":" + splittedTokens[1] + ":" + splittedTokens[2] + ":" + splittedTokens[3];
-              } else {
-                  LOG.error("getBundleBaseID: Expecting at least 4 tokens from parsing logical identifier {}",logicalIdentifiers.get(0));
-              }
-          } else {
-              LOG.warn("getBundleBaseID: Expecting only one logical identifier but received {} from list of identifiers from bundle file {}",bundleFilename);
-          }
-      }
-      return(bundleBaseID);
-  }
-
-  private void bundleAdditionalReferentialIntegrityChecks(URL crawlTarget) {
-    // Perform additional referential integrity check beside the normal check.
-    // For all references in all labels, check if they refer to a logical identifier that is valid and is in this bundle.
-
-    URL url = null;
-    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    DocumentBuilder db = null;
-    Document xml = null;
-    DOMSource domSource = null;
-
-    try {
-      List<Target> children = getContext().getCrawler().crawl(crawlTarget,true);  // Get also the directories.
-      LOG.debug("bundleAdditionalReferentialIntegrityChecks:crawlTarget {}",crawlTarget);
-      LOG.debug("bundleAdditionalReferentialIntegrityChecks:crawlTarget,children.size():afor_reduced: {},{}",crawlTarget,children.size());
-
-      db = dbf.newDocumentBuilder();
-
-      for (Target child : children) {
-        LOG.debug("bundleAdditionalReferentialIntegrityChecks:FilenameUtils.getName(child.toString()) {}",FilenameUtils.getName(child.toString()));
-
-        // Regardless of what kinds of file it is, parse it to find all the local_identifier and lid_reference or lidvid_reference tags.
-        url = child.getUrl();
-
-        if (url.toString().endsWith(".xml")) {
-            xml = db.parse(url.openStream());
-            domSource = new DOMSource(xml);
-            ArrayList<String> lidOrLidVidReferences = LabelUtil.getLidVidReferences(domSource,url);
-            ArrayList<String> logicalIdentifiers    = LabelUtil.getLogicalIdentifiers(domSource,url);
-
-            LOG.debug("bundleAdditionalReferentialIntegrityChecks:url,lidOrLidVidReferences {}",url,lidOrLidVidReferences.size());
-            LOG.debug("bundleAdditionalReferentialIntegrityChecks:url,logicalIdentifiers {}",url,logicalIdentifiers.size());
-
-            if ((logicalIdentifiers != null) && !logicalIdentifiers.isEmpty()) {
-                this.logicalIdentifiersCumulative.addAll(logicalIdentifiers);
-
-                // If the label is a bundle, parse the logical identifier for the base ID.
-                Matcher matcher = BUNDLE_LABEL_PATTERN.matcher(
-                FilenameUtils.getName(child.toString()));
-                if (matcher.matches()) {
-                    this.bundleBaseID = this.getBundleBaseID(logicalIdentifiers, child.toString());
-                }
-            }
-
-            if ((lidOrLidVidReferences != null) && !lidOrLidVidReferences.isEmpty()) {
-                for (int ii=0; ii < lidOrLidVidReferences.size(); ii++) {
-                    // Do not add duplicate references by checking for existence of the combination reference id in this.lidOrLidVidReferencesCumulative
-                    // and the file name has not already been added already in this.lidOrLidVidReferencesCumulativeFileNames list.
-                    // Note that because the reference id can be the same, the combination of the id plus the file name will make it unique. 
-                    if (this.hasReferenceIDAndFilenameComboAdded(lidOrLidVidReferences.get(ii),url) == false) {
-
-                        this.lidOrLidVidReferencesCumulative.add(lidOrLidVidReferences.get(ii));
-                        this.lidOrLidVidReferencesCumulativeFileNames.add(url);  // Save the file name as well so it can be referred to.
-
-                        LOG.debug("bundleAdditionalReferentialIntegrityChecks:ADDING_REFERENCE {}",lidOrLidVidReferences.get(ii),lidOrLidVidReferencesCumulative.size());
-                    }
-
-                    // Every lid_reference or lidvid_reference is connected to a logical identifier.
-                    // Save that in a Map so a logical identifier can be retrieved from a lid_reference or lidvid_reference as key.
-                    if ((logicalIdentifiers != null) && !logicalIdentifiers.isEmpty()) {
-                        this.lidOrLidvidReferenceToLogicalIdentifierMap.put(lidOrLidVidReferences.get(ii), logicalIdentifiers.get(0));
-                    } else {
-                        LOG.error("Expecting the logicalIdentifiers array to be non-empty for label {}",url);
-                    }
-                }
-            }
-        } else {
-            LOG.debug("bundleAdditionalReferentialIntegrityChecks:NON_XML:url {}",url);
-            if (Utility.isDir(url.toString())) {
-                // If the url is a directory, make a recursive call to this same function.
-                this.bundleAdditionalReferentialIntegrityChecks(url);
-            }
-
-        }
-      }
-    } catch (IOException io) {
-      reportError(GenericProblems.UNCAUGHT_EXCEPTION, getTarget(), -1, -1,
-          io.getMessage());
-    } catch (Exception ex) {
-      reportError(GenericProblems.UNCAUGHT_EXCEPTION, getTarget(), -1, -1,
-          ex.getMessage());
-    }
-
-    LOG.debug("bundleAdditionalReferentialIntegrityChecks:logicalIdentifiersCumulative.size() {}",this.logicalIdentifiersCumulative.size());
-    LOG.debug("bundleAdditionalReferentialIntegrityChecksbundleReferentialIntegrityRule:lidOrLidVidReferencesCumulative.size() {}",this.lidOrLidVidReferencesCumulative.size());
-    LOG.debug("bundleAdditionalReferentialIntegrityChecksbundleReferentialIntegrityRule:lidOrLidVidReferencesCumulativeFilenames.size() {}",this.lidOrLidVidReferencesCumulativeFileNames.size());
   }
 
   @ValidationTest
@@ -404,8 +151,21 @@ public class BundleReferentialIntegrityRule extends AbstractValidationRule {
     // Report the integrity of the references if they point to any local identifiers in this bundle.
     //
 
-    this.bundleAdditionalReferentialIntegrityChecks(getTarget());
-    this.reportLidOrLidvidReferenceToNonExistLogicalReferences();
+    // Use the refactored functions in ReferentialIntegrityUtil class.
+    ReferentialIntegrityUtil.initialize("bundle",getTarget(),getListener(),getContext());
+    ReferentialIntegrityUtil.additionalReferentialIntegrityChecks(getTarget());
+    ReferentialIntegrityUtil.reportLidOrLidvidReferenceToNonExistLogicalReferences();
+
+    // https://github.com/NASA-PDS/validate/issues/69
+    // As a user, I want to validate that all context objects specified in observational products are referenced in the parent bundle/collection Reference_List
+    //
+    // For every references in the Context_Area, check if it also occur in the bundle/collection Reference_List,
+    //  i.e: All context objects specified in observational are referenced in the parent bundle/collection Reference_List 
+    //
+    // Use the refactored function(s) in ReferentialIntegrityUtil class.
+
+    ReferentialIntegrityUtil.reportContextReferencesUnreferenced();
+
   }
   
   private void getBundleMembers(URL bundle) {

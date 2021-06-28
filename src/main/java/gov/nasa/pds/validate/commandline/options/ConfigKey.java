@@ -99,6 +99,11 @@ public class ConfigKey {
     public static final String SKIP_CONTENT_VALIDATION = "validate.skipContentValidation";
 
     /**
+     * Property to disable context reference check.
+     */
+    public static final String SKIP_CONTEXT_REFERENCE_CHECK = "validate.skipContextReferenceCheck";
+
+    /**
      * Property to enable check in between fields validation for Table_Character file.
      */
     public static final String CHECK_INBETWEEN_FIELDS = "validate.checkInbetweenFields";

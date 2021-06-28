@@ -176,6 +176,10 @@ public enum ProblemType {
 
     MEMBER_NOT_FOUND("warning.integrity.member_not_found"),
 
+    // A warning when a reference is in the Context_Area but not listed in a bundle/collection's Reference_List tag. 
+    // Will become an ERROR once it is documented in the Standards Reference
+    MISSING_CONTEXT_REFERENCE("warning.integrity.missing_context_reference"),
+
     UNREFERENCED_MEMBER("warning.integrity.unreferenced_member"),
 
     UNLABELED_FILE("warning.file.not_referenced_in_label"),
