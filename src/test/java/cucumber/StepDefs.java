@@ -138,6 +138,8 @@ public class StepDefs {
         for (String strTemp : problemTokens){
             if (strTemp.equals("MISSING_REFERENCED_FILE")) {
                 count = this.getMessageCount(reportJson, ProblemType.MISSING_REFERENCED_FILE.getKey());
+            } else if (strTemp.equals("NON_PDFA_FILE")) {
+                count = this.getMessageCount(reportJson, ProblemType.NON_PDFA_FILE.getKey());
             } else if (strTemp.equals("LABEL_UNRESOLVABLE_RESOURCE")) {
                 count = this.getMessageCount(reportJson, ProblemType.LABEL_UNRESOLVABLE_RESOURCE.getKey());
             } else if (strTemp.equals("CONTEXT_REFERENCE_NOT_FOUND")) {

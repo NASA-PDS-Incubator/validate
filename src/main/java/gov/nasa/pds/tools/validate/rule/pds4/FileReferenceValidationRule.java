@@ -37,6 +37,7 @@ import org.w3c.dom.Document;
 
 import gov.nasa.pds.tools.label.ExceptionType;
 import gov.nasa.pds.tools.util.FileSizesUtil;
+import gov.nasa.pds.tools.util.FlagsUtil;
 import gov.nasa.pds.tools.util.FileReferencedMapList;
 import gov.nasa.pds.tools.util.LabelParser;
 import gov.nasa.pds.tools.util.MD5Checksum;
@@ -239,8 +240,11 @@ public class FileReferenceValidationRule extends AbstractValidationRule {
                 name = child.getStringValue();
                 LOG.debug("FileReferenceValidationRule:validate:name {}",name);
 
+                // Do not perform PDF/A validation if user desire to skip the content validation.
+                LOG.debug("validate:FlagsUtil.getContentValidationFlag() {}",FlagsUtil.getContentValidationFlag());
+
                 // If the name is a PDF file, validate it.
-                if (name.endsWith(PDF_ENDS_WITH_PATTERN)) {
+                if (name.endsWith(PDF_ENDS_WITH_PATTERN) && FlagsUtil.getContentValidationFlag() == true) {
                     if (pdfUtil == null) {
                         pdfUtil = new PDFUtil(getTarget());
                     }
@@ -260,6 +264,8 @@ public class FileReferenceValidationRule extends AbstractValidationRule {
                             fileObject.getLineNumber(), -1));
                         passFlag = false;
                     }
+                } else {
+                    LOG.debug("validate:FlagsUtil.getContentValidationFlag(),SKIPPING_PDF_VALIDATION {},{}",FlagsUtil.getContentValidationFlag(),name);
                 }
               } else if ("md5_checksum".equals(child.getLocalPart())) {
                 checksum = child.getStringValue();
